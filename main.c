@@ -15,8 +15,13 @@ int main(int argc, char *argv[]) {
     	f2Matrix[i] = (char *)malloc(SIZE * sizeof(char));
         LCSMatrix[i] = (int *)malloc(SIZE * sizeof(int));
     }
-	f1 = fopen(argv[argc - 2], "r");
-	f2 = fopen(argv[argc - 1], "r");
+    if(argv[argc - 2][0] == '>') {
+    	f1 = fopen(argv[argc - 4], "r");
+		f2 = fopen(argv[argc - 3], "r");
+    } else {
+    	f1 = fopen(argv[argc - 2], "r");
+		f2 = fopen(argv[argc - 1], "r");
+    }
 	if(f1 == NULL)
 		exit(1);
 	if(f2 == NULL)
