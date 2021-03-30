@@ -218,5 +218,7 @@ void computeDiff(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int 
 		}          
 	}
 	printOutput(diff);
+	if(argv[argc - 2][0] == '>')
+		createPatchFile(diff, argv[argc - 1]);
   return;
 }

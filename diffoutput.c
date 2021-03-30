@@ -35,5 +35,19 @@ void printOutput(diffList l) {
   return;
 }
 
+void createPatchFile(diffList l, char *filename) {
+  FILE *f;
+  f = fopen(filename, "w");
+  node *p = l;
+  while(p) {
+    if(p -> op == 'n')
+      fprintf(f, "\\ No newline at end of file\n");
+    else
+      fprintf(f, "%c%s\n", p -> op, p -> line);
+    p = p -> next; 
+  }
+  return;
+}
+
 
 
