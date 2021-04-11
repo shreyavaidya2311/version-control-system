@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "diff.h"
 #include "diffoutput.h"
 
@@ -133,29 +134,29 @@ int compareLine(char *line1, char *line2, int iflag, int bflag, int wflag) {
 }
 
 // Sets flags as per entered by user
-void setFlags(int argc, char **argv, int *iflag, int *bflag, int *wflag) {
-	if(argc == 3)
-		return;
-	for(int i = 1; i < argc - 2; i++) {
-		switch(argv[i][1]) { 
-			case 'i': *iflag = 1;
-						break;
-			case 'b': *bflag = 1;
-						break;
-			case 'w': *wflag = 1;
-						break;
-			default: break;
-		}
-	}
-	return;	
-}
+// void setFlags(int argc, char **argv, int *iflag, int *bflag, int *wflag) {
+// 	if(argc == 3)
+// 		return;
+// 	for(int i = 1; i < argc - 2; i++) {
+// 		switch(argv[i][1]) { 
+// 			case 'i': *iflag = 1;
+// 						break;
+// 			case 'b': *bflag = 1;
+// 						break;
+// 			case 'w': *wflag = 1;
+// 						break;
+// 			default: break;
+// 		}
+// 	}
+// 	return;	
+// }
 
 //Forms Longest Subsequent Matrix from the two file matrices
-int formLCSMatrix(int ***LCSMatrix, char ***f1Matrix, char ***f2Matrix, int argc, char **argv, int l1, int l2) {
+int formLCSMatrix(int ***LCSMatrix, char ***f1Matrix, char ***f2Matrix, int l1, int l2) {
 	char **f1, **f2;
 	int i, j, x, y, **lcs = *LCSMatrix;
 	int iflag = 0, bflag = 0, wflag = 0;
-	setFlags(argc, argv, &iflag, &bflag, &wflag);
+	// setFlags(argc, argv, &iflag, &bflag, &wflag);
 	f1 = *f1Matrix;
 	f2 = *f2Matrix;
 	for(i = 0; i <= l2; i++) 
@@ -174,18 +175,11 @@ int formLCSMatrix(int ***LCSMatrix, char ***f1Matrix, char ***f2Matrix, int argc
 }
 
 //Creates a diffList to print final diff output as a unified output
-void computeDiff(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int l2, int argc, char **argv) {
+void computeDiff(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int l2) {
 	diffList diff;
-	int l1flag = l1, l2flag = l2, l3 = 0;
 	int iflag = 0, bflag = 0, wflag = 0;
-	setFlags(argc, argv, &iflag, &bflag, &wflag);
+	// setFlags(argc, argv, &iflag, &bflag, &wflag);
 	init(&diff);
-	if(l1 >= l2) 
-		insertBegin(&diff, 'n', " ");
-	else if(l1 < l2 && f2Matrix[l2][0] == '\0') {
-		insertBegin(&diff, 'n', " ");
-		l3 = 1;
-	}
 	while(l1 != 0 || l2 != 0) {
 		if(l1 == 0) {
 			insertBegin(&diff, '+', f2Matrix[l2 - 1]);
@@ -204,22 +198,85 @@ void computeDiff(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int 
 			insertBegin(&diff, '+', f2Matrix[l2 - 1]);
 			l2 -= 1;
       	}
-      	else if(l3 && f1Matrix[l1flag][0] == '\0') {
-			insertBegin(&diff, 'n', " ");
-			l1flag -= 1;
-      	}
-		else if(l3 == 0 && f2Matrix[l2flag][0] == '\0') {
-			insertBegin(&diff, 'n', " ");
-			l2flag -= 1;
-		}
     	else {
       		insertBegin(&diff, '-', f1Matrix[l1 - 1]);
 			l1 -= 1;
 		}          
 	}
-	if(argv[argc - 2][0] == '>') 
-		createPatchFile(diff, argv[argc - 1]);
-	else 
+	// if(argv[argc - 2][0] == '>') 
+		// createPatchFile(diff, argv[argc - 1]);
+	// else 
 		printOutput(diff);
   return;
+}
+
+//Creates a diffList to print final diff output as a unified output
+void makeDiffFile(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int l2, char *filename) {
+	diffList diff;
+	int iflag = 0, bflag = 0, wflag = 0;
+	char patchfilename[128];
+	int i = 0;
+	// setFlags(argc, argv, &iflag, &bflag, &wflag);
+	init(&diff);
+	while(l1 != 0 || l2 != 0) {
+		if(l1 == 0) {
+			insertBegin(&diff, '+', f2Matrix[l2 - 1]);
+			l2 -= 1;
+		}
+		else if(l2 == 0) {
+			insertBegin(&diff, '-', f1Matrix[l1 - 1]);
+			l1 -= 1;
+		}
+		else if(compareLine(f1Matrix[l1 - 1], f2Matrix[l2 - 1], iflag, bflag, wflag) == 0) {
+			insertBegin(&diff, ' ', f1Matrix[l1 - 1]);
+            l1 -= 1;
+            l2 -= 1;
+		}
+		else if(LCSMatrix[l1 - 1][l2] <= LCSMatrix[l1][l2 - 1]) {
+			insertBegin(&diff, '+', f2Matrix[l2 - 1]);
+			l2 -= 1;
+      	}
+    	else {
+      		insertBegin(&diff, '-', f1Matrix[l1 - 1]);
+			l1 -= 1;
+		}          
+	}
+	while(filename[i] != '.') {
+		patchfilename[i] = filename[i];
+		i += 1;
+	}
+	patchfilename[i] = '\0';
+	strcat(patchfilename, ".patch");
+	createPatchFile(diff, patchfilename);
+	printOutput(diff);
+  return;
+}
+
+void diff(char *filename1, char *filename2, char o) {
+	FILE *f1, *f2;
+	int l1, l2;
+	char **f1Matrix, **f2Matrix;
+	int **LCSMatrix;
+	f1Matrix = (char **)malloc(SIZE * sizeof(char *)); 
+	f2Matrix = (char **)malloc(SIZE * sizeof(char *)); 
+	LCSMatrix = (int **)malloc(SIZE * sizeof(int *));  
+    for (int i = 0; i < SIZE; i++) {
+    	f1Matrix[i] = (char *)malloc(SIZE * sizeof(char)); 
+    	f2Matrix[i] = (char *)malloc(SIZE * sizeof(char));
+        LCSMatrix[i] = (int *)malloc(SIZE * sizeof(int));
+    }
+    f1 = fopen(filename1, "r");
+	f2 = fopen(filename2, "r");
+	if(f1 == NULL)
+		exit(1);
+	if(f2 == NULL)
+		exit(1);
+	l1 = storeByLine(&f1Matrix, &f1) + 1; 
+	l2 = storeByLine(&f2Matrix, &f2) + 1; 
+	formLCSMatrix(&LCSMatrix, &f1Matrix, &f2Matrix, l1, l2);
+	if(o == 'p')
+		computeDiff(LCSMatrix, f1Matrix, f2Matrix, l1, l2);
+	else
+		makeDiffFile(LCSMatrix, f1Matrix, f2Matrix, l1, l2, filename1);
+	return;
 }

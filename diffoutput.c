@@ -25,13 +25,16 @@ void insertBegin(diffList *l, char op, char* line) {
 
 void printOutput(diffList l) {
   node *p = l;
+  int additions = 0, deletions = 0;
   while(p) {
-    if(p -> op == 'n')
-      printf("\\ No newline at end of file\n");
-    else
-      printf("%c%s\n", p -> op, p -> line);
+    if(p -> op == '+')
+      additions += 1;
+    else if(p -> op == '-')
+      deletions += 1;
+    printf("%c%s\n", p -> op, p -> line);
     p = p -> next; 
   }
+  printf("%d additions, %d deletions\n", additions, deletions);
   return;
 }
 
@@ -40,14 +43,9 @@ void createPatchFile(diffList l, char *filename) {
   f = fopen(filename, "w");
   node *p = l;
   while(p) {
-    if(p -> op == 'n')
-      fprintf(f, "\\ No newline at end of file\n");
-    else
-      fprintf(f, "%c%s\n", p -> op, p -> line);
+    fprintf(f, "%c%s\n", p -> op, p -> line);
     p = p -> next; 
   }
+  fclose(f);
   return;
 }
-
-
-

@@ -2,11 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include "diff.h"
+#include "patch.h"
 
 void printLine(FILE *f, char *line) {
-	char l[128];
+	char l[SIZE];
 	for(int i = 1; line[i] != '\0'; i++)
 		fprintf(f, "%c", line[i]); 
+	fprintf(f, "\n");
 	return;
 }
 
@@ -25,16 +27,26 @@ void patchFile(FILE *f, FILE *fpatch) {
 	return;
 }
 
-int main(int argc, char *argv[]) {
+void patch(char* patchfile) {
 	FILE *f, *fpatch;
 	char **fMatrix;
-	f = fopen("a.txt", "r+");
-	fpatch = fopen(argv[1], "r");
+	char filename[128];
+	int i = 0;
+	while(patchfile[i] != '.') {
+		filename[i] = patchfile[i];
+		i += 1;
+	}
+	filename[i] = '\0';
+	strcat(filename, ".txt");
+	f = fopen(filename, "w");
+	fpatch = fopen(patchfile, "r");
 	if(f == NULL)
 		exit(1);
 	if(fpatch == NULL)
 		exit(1);
-	printf("patching file a.txt\n");
+	printf("patching file %s\n", filename);
 	patchFile(f, fpatch);
-	return 0;
+	fclose(f);
+	fclose(fpatch);
+	return;
 }

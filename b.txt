@@ -1,6 +1,248 @@
-This commit stores
-an OLDER VERSION
-of the file
-New version 
-can be found
-in next file
+import React from "react";
+
+const rohit_chaudhari = () => {
+  return (
+    <div>
+      <section id="content">
+        <a href="../diaries.html">
+          <span
+            class="fa fa-arrow-left"
+            style={{
+              fontSize: "2rem",
+              position: "absolute",
+              marginTop: "2rem",
+            }}
+          ></span>
+        </a>
+        <div class="container text-justify">
+          <h2 style={{ lineHeight: "unset", margin: "unset" }}>
+            Rohit Chaudhari
+          </h2>
+          <h5 style={{ lineHeight: "unset", margin: "unset" }}>Arcesium</h5>
+          <div style={{ color: "gray", marginTop: "0.5rem" }}>
+            <p style={{ fontStyle: "oblique" }}>
+              Computer Engineering, Batch of '22
+            </p>
+          </div>
+          <br />
+
+          <p>
+            <b>1. What was the structure of the entire interview process?</b>
+            <br />
+            <li style={{ marginLeft: "2rem" }}>
+              The first round was an aptitude test of 1 and a half hour on
+              HackerRank on 02 sept 2020.
+            </li>
+            <li style={{ marginLeft: "2rem" }}>
+              Four interview rounds out of which 3 were technical rounds and 1
+              HR round on 04 sept 2020.
+            </li>
+          </p>
+
+          <p>
+            <b>2. What questions were asked in the aptitude test?</b>
+            <br />
+            <div style={{ marginLeft: "2rem" }}>
+              <li>
+                The duration of the test was approximately 1 and a half hour.
+              </li>
+              <li>
+                There were 3 Sections – Quant, Technical and Coding. any
+                remaining time from the previous section will roll over into the
+                next section.
+              </li>
+              <li>
+                Quant (20 mins) – 20 Questions based on general aptitude. This
+                part was pretty easy.
+              </li>
+              <li>
+                Technical MCQs (15 mins) – 15 Questions based on Predict output,
+                OOPS, Computer Networks and DBMS.
+              </li>
+              <li>
+                Coding (45 mins) – There were 2 Questions. I don’t exactly
+                remember the first question but it was based on breadth-first
+                search of graph. The second question was given n dice with
+                different letters printed on it and string. Find the number of
+                ways to obtain the string from dice throws.
+              </li>
+              <li>
+                For eg. If String = “aa” and There are two dice with 6 a’s
+                printed on 6 sides then number of ways are 72. (Choosing each
+                ‘a’ from first die first and then from second die (Total 36) and
+                similarly choosing ‘a’ from second die and then first (Total
+                36))
+              </li>
+              <li>
+                Total of 15 students were shortlisted after the aptitude test.
+              </li>
+            </div>
+          </p>
+
+          <p>
+            <b>3. How many interview rounds were there for the company?</b>
+            <br />
+            (Like there were 2 rounds (1 tech, 1 HR, and elaborate in brief of
+            what questions were asked, and what were your answers for those,
+            basically how your each interview flowed, and approximate time for
+            each interview round) Four Rounds – 3 Technical and 1 HR
+            <br />
+            <br />
+            <i>Technical Round 1: (Approx. 45 mins)</i>
+            <br />
+            The interview started with a brief introduction. This round was
+            mostly focused on a coding question. The coding question was:
+            <br />
+            Let the starting position of the frog be 0 and he wants to go to
+            position n. K is the max number of jumps that can be made forward by
+            the frog. Count the total number of ways to cover the distance.
+            Consider, n = 4 and k = 2 Then number of ways are 4 Which are (1, 1,
+            1, 1), (1, 2, 1), (1, 1, 2), (2, 1, 1).
+            <a href="https://www.geeksforgeeks.org/count-number-of-ways-to-cover-a-distance/">
+              Pretty similar to this one.
+            </a>{" "}
+            In the end, the interviewer also asked about the difference between
+            Static and dynamic memory allocation.
+            <br />
+            <br />
+            <i>Technical Round 2: (Approx. 1 hr)</i>
+            <br />
+            This round was based on knowledge of the core CS subjects. The
+            interviewer started with OOPS (Object – oriented programming) and
+            then moved to Operating System and Computer networks. Some of the
+            questions were:
+            <div style={{ marginLeft: "2rem" }}>
+              <li>Four pillars of OOPS.</li>
+              <li>Difference between Encapsulation and abstraction.</li>
+              <li>What is Inheritance? Types of inheritance.</li>
+              <li>
+                When we initialize the object of a child class, then what is the
+                order in which constructors and destructors of parent and child
+                class are called?
+              </li>
+              <li>
+                What is the return type of constructor? If the constructor
+                returns nothing, then how we can initialize a class object using
+                it.
+              </li>
+              <li>
+                What is friend function and friend class? Why there is a need
+                for a friend function?
+              </li>
+              <li>What is operator overloading?</li>
+              <li>
+                What are threads? How can a thread get blocked? What is
+                multithreading? Have you used it before? If yes, where?{" "}
+              </li>
+              <li>What is deadlock?</li>
+              <li>
+                The functionality of each layer in the IP model when a person
+                visits a particular website.
+              </li>
+              <li>
+                Difference between TCP and UDP. Give examples where TCP and UDP
+                are used.
+              </li>
+            </div>
+            <br />
+            <i> Technical Round 3: (Approx. 1hr)</i>
+            <br />
+            This round started with a discussion on my projects. They asked me
+            about features in my projects which they found interesting? Why you
+            chose a particular project? What is the future scope of the project?
+            After the discussion on projects, they again moved to technical
+            questions.
+            <br />
+            Questions:
+            <div style={{ marginLeft: "2rem" }}>
+              <li>
+                What is PWA (Progressive web application)? Procedure to make a
+                particular web application a PWA? What are the benefits of it?
+                (These questions were asked because I mentioned PWA in my
+                resume)
+              </li>
+              <li>What is hashing? Give examples of hashing</li>
+              <li>Collision in hashing and ways to resolve collision</li>
+              <li>One or two questions based on predict output</li>
+              <li>
+                Implement heap using an array. What are the time and space
+                complexities of insertion and deletion in heap? Link
+              </li>
+            </div>
+            <br />
+            <i>HR Round: (Approx. 15 mins)</i>
+            This round was a bit candid than previous technical rounds. Some of
+            the questions were:
+            <div style={{ marginLeft: "2rem" }}>
+              <li>Introduce Yourself</li>
+              <li>Family background and place</li>
+              <li>Describe your Smart India Hackathon experience</li>
+              <li>Hobbies</li>
+            </div>
+          </p>
+
+          <p>
+            <b>
+              4. How many questions were asked based on the projects and on
+              resume?
+            </b>{" "}
+            <br />I would say a lot. As I mentioned, they ask about features in
+            your app which they find interesting. One of my android apps had a
+            Wifi-P2P feature. So, they asked me questions like how it works,
+            what libraries you used, why you preferred it over P2P using
+            Bluetooth.
+          </p>
+
+          <p>
+            <b>
+              5. What are some good resources used by you in your preparation?
+            </b>{" "}
+            <br />
+            <li style={{ marginLeft: "2rem" }}>
+              I used Hackerrank and Geeks for Geeks to practice coding questions
+            </li>
+            <li style={{ marginLeft: "1.5rem" }}>
+              For General aptitude questions, I referred R. S. Agarwal and{" "}
+              <a href="https://www.indiabix.com/">Indiabix</a>
+            </li>
+          </p>
+
+          <p>
+            <b>6. Some tips to crack the coding questions.</b> <br />
+            <li style={{ marginLeft: "2rem" }}>
+              Prefer C++ or Python over C as these languages provide you with
+              many utility functions and libraries which saves lot of time
+            </li>
+            <li style={{ marginLeft: "2rem" }}>
+              If you are unable to solve a question, at least try to clear some
+              test cases in the coding section of an aptitude test
+            </li>
+            <li style={{ marginLeft: "2.5rem" }}>
+              Take your time while solving questions in the interview. Clarify
+              the questions with the interviewer. Try to find a brute force
+              solution first and then try to optimize it. Explain your approach
+              to the interviewer while writing code
+            </li>
+          </p>
+
+          <p>
+            <b>If there’s anything more you want to add, please add here</b>{" "}
+            <br />
+            Cheers and Enjoy Coding!!!
+            <br />
+          </p>
+
+          <br />
+          <div style={{ color: "gray", fontSize: "1.15rem" }}>
+            <a href="tel:+919730912839">+91 97309 12839</a>
+            <br />
+            <a href="mailto:chaudharirk18.comp@coep.ac.in">
+              chaudharirk18.comp@coep.ac.in
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+export default rohit_chaudhari;
