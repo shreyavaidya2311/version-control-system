@@ -12,6 +12,8 @@ void initFileStorage(fileStorage *f) {
     f -> arr = (node **)malloc(sizeof(node *) * 512);
     f -> head = 0;
     f -> numberOfFiles = 0;
+    for(int i = 0; i < 512; i++) 
+        f -> arr[i] = NULL;
     return;
 }
 
@@ -86,6 +88,7 @@ void add(fileStorage *f, char *filename) {
         newnode -> next = NULL;
         newnode -> version = 0;
         f -> arr[i] = newnode;
+        f -> arr[i] -> next = NULL;
         f -> head = f -> numberOfFiles;
         f -> numberOfFiles += 1;
         printf("%s added to staging area\n", filename);
@@ -119,13 +122,10 @@ void itoa(int n, char s[]) {
 }
 
 void commit(fileStorage *f, char *filename) {
-    node *newnode, *p, *q;
+    node *newnode, *q, *p;
     int i = 0;
     char file[512], patch[512], version[5];
-    p = f -> arr[f -> head];
-    while (p -> next)
-        p = p -> next;
-    itoa(p -> version, version);
+    itoa(f -> arr[f -> head] -> version + 1, version);
     while(filename[i] != '.') {
         file[i] = filename[i];
         patch[i] = filename[i];
@@ -146,12 +146,10 @@ void commit(fileStorage *f, char *filename) {
         return;
     newnode -> patchfile = patch;
     newnode -> filename = file;
-    newnode -> next = NULL;
     newnode -> version = f -> arr[f -> head] -> version + 1;
     q = f -> arr[f -> head];
-    while (q -> next)
-        q = q -> next;
-    q -> next = newnode;
+    newnode -> next = q;
+    f -> arr[f -> head] = newnode;    
     return;
 }
 
