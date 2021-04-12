@@ -13,6 +13,6 @@ void initFileStorage(fileStorage *f);
 void newRepository(char *repository);
 void changeRepository(char *repository);
 void initialize();
-void add(fileStorage f, char *filename);
+void add(fileStorage *f, char *filename);
 void commit(fileStorage *f, char *filename);
 void push(fileStorage *f, char *filename);

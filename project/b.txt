@@ -1,5 +1,3 @@
-hi
-hello
 bye
 goodbye
-
+okay

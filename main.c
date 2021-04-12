@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 		}
 		else if(strcmp(command, "add") == 0) {
 			scanf("%s", args);
-			add(f, args);
+			add(&f, args);
 		}
 		else if(strcmp(command, "commit") == 0) {
 			scanf("%s", args);

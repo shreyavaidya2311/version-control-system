@@ -45,10 +45,10 @@ void initialize() {
     return;
 }
 
-void add(fileStorage f, char *filename) {
+void add(fileStorage *f, char *filename) {
     node *newnode;
-    char cwd[2048], nwd[2048]; 
-    int flag = 0, i;
+    char cwd[2048], nwd[2048], check[512]; 
+    int flag = 0, i, j = 0;
     if(getcwd(cwd, sizeof(cwd)) != NULL) {
         strcat(cwd, "/");
         strcpy(nwd, cwd);
@@ -60,16 +60,23 @@ void add(fileStorage f, char *filename) {
             return;
         }
     }
-    for(i = 0; i < f.numberOfFiles; i++) {
-        if(strcmp(f.arr[i] -> filename, filename) == 0) {
+    for(i = 0; i < f -> numberOfFiles; i++) {
+        while(f -> arr[i] -> filename[j] != '_') {
+            check[j] = f -> arr[i] -> filename[j];
+            j += 1;
+        }
+        check[j] = '\0';
+        strcat(check, ".txt");
+        if(strcmp(check, filename) == 0) {
             flag = 1;
             break;
         }
         else
             flag = 0;
+        strcpy(check, "");
     }
     if(flag == 1)
-        f.head = i;
+        f -> head = i;
     else {
         newnode = (node *)malloc(sizeof(node));
         if(!newnode)
@@ -78,12 +85,11 @@ void add(fileStorage f, char *filename) {
         newnode -> filename = filename;
         newnode -> next = NULL;
         newnode -> version = 0;
-        f.arr[i] = newnode;
-        f.numberOfFiles += 1;
-        f.head = f.numberOfFiles;
+        f -> arr[i] = newnode;
+        f -> head = f -> numberOfFiles;
+        f -> numberOfFiles += 1;
         printf("%s added to staging area\n", filename);
     }
-    printf("%d\n", f.head);
     free(newnode);
     return;
 }
