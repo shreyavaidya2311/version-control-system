@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 		}
 		else if(strcmp(command, "push") == 0) {
 			scanf("%s", args);
-			push(args);
+			push(&f, args);
 		}
 		else if(strcmp(command, "exit") == 0)
 			exit(1);

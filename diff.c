@@ -265,7 +265,7 @@ void diff(char *filename1, char *filename2, char o) {
     	f2Matrix[i] = (char *)malloc(SIZE * sizeof(char));
         LCSMatrix[i] = (int *)malloc(SIZE * sizeof(int));
     }
-    f1 = fopen(filename1, "r");
+    f1 = fopen(filename1, "w");
 	f2 = fopen(filename2, "r");
 	if(f1 == NULL)
 		exit(1);

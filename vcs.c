@@ -76,9 +76,8 @@ void add(fileStorage f, char *filename) {
             return;
         newnode -> patchfile = NULL;
         newnode -> filename = filename;
-        printf("%s\n", newnode -> filename);
         newnode -> next = NULL;
-        newnode -> prev = NULL;
+        newnode -> version = 0;
         f.arr[i] = newnode;
         f.numberOfFiles += 1;
         f.head = f.numberOfFiles;
@@ -89,19 +88,75 @@ void add(fileStorage f, char *filename) {
     return;
 }
 
+ void reverse(char s[]) {
+    int i, j;
+    char c;
+    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
+ }
+
+void itoa(int n, char s[]) {
+    int i, sign;
+    if ((sign = n) < 0)  
+        n = -n;         
+    i = 0;
+    do {       
+        s[i++] = n % 10 + '0';   
+    } while ((n /= 10) > 0);   
+    if (sign < 0)
+        s[i++] = '-';
+    s[i] = '\0';
+    reverse(s);
+}
+
 void commit(fileStorage *f, char *filename) {
+    node *newnode, *p, *q;
+    int i = 0;
+    char file[512], patch[512], version[5];
+    p = f -> arr[f -> head];
+    while (p -> next)
+        p = p -> next;
+    itoa(p -> version, version);
+    while(filename[i] != '.') {
+        file[i] = filename[i];
+        patch[i] = filename[i];
+        i += 1;
+    }
+    file[i] = '\0';
+    patch[i] = '\0';
+    strcat(file, "_v");
+    strcat(file, version);
+    strcat(file, ".txt");
+    strcat(patch, "_v");
+    strcat(patch, version);
+    strcat(patch, ".patch");
+    newnode = (node *)malloc(sizeof(node));
     chdir(".stagingArea");
-    diff("buffer.txt", filename, 'c');
+    diff(file, filename, 'c');
+    if(!newnode)
+        return;
+    newnode -> patchfile = patch;
+    newnode -> filename = file;
+    newnode -> next = NULL;
+    newnode -> version = f -> arr[f -> head] -> version + 1;
+    q = f -> arr[f -> head];
+    while (q -> next)
+        q = q -> next;
+    q -> next = newnode;
     return;
 }
 
-void push(char *filename) {
+void push(fileStorage *f, char *filename) {
     char cwd[2048], nwd[2048];
     if(getcwd(cwd, sizeof(cwd)) != NULL) {
         strcat(cwd, "/");
         strcat(cwd, filename);
     }
-    patch("buffer.patch");
+    printf("%s\n", f -> arr[f -> head] -> filename);
+    patch(f -> arr[f -> head] -> patchfile);
     chdir("..");
     if(getcwd(nwd, sizeof(nwd)) != NULL) {
         strcat(nwd, "/");
