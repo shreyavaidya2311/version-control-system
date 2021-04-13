@@ -17,26 +17,6 @@ void initFileStorage(fileStorage *f) {
     return;
 }
 
-void newRepository(char *repository) {
-    char* directory = repository;
-    if(!mkdir(directory, 0777))
-        printf("%s created\n", directory);
-    else 
-        printf("Unable to create repository\n");
-    chdir(repository);
-    return;
-}
-
-void changeRepository(char *repository) {
-	if(!chdir(repository)) {
-    	system("dir");
-    	return;
-	}
-    else 
-        printf("Unable to change repository\n");
-    return;
-}
-
 void initialize() {
     if(!mkdir(".stagingArea", 0755))
         printf("Repository initialized\n");
@@ -44,6 +24,30 @@ void initialize() {
         printf("Initialization failed\n");
         exit(1);
     }
+    return;
+}
+
+void newRepository(char *repository) {
+    char* directory = repository;
+    if(!mkdir(directory, 0777)) {
+        printf("%s created\n", directory);
+        chdir(repository);
+        initialize();
+        chdir("..");
+    }
+    else 
+        printf("Unable to create repository\n");
+    return;
+}
+
+void changeRepository(char *repository) {
+	if(!chdir(repository)) {
+        printf("Changed repository to %s\n", repository);
+    	system("dir");
+    	return;
+	}
+    else 
+        printf("Unable to change repository\n");
     return;
 }
 
@@ -91,9 +95,8 @@ void add(fileStorage *f, char *filename) {
         f -> arr[i] -> next = NULL;
         f -> head = f -> numberOfFiles;
         f -> numberOfFiles += 1;
-        printf("%s added to staging area\n", filename);
-        printf("%s\n", newnode -> filename);
     }
+    printf("%s added to staging area\n", filename);
     return;
 }
 
@@ -124,27 +127,25 @@ void itoa(int n, char s[]) {
 void commit(fileStorage *f, char *filename) {
     node *newnode, *q, *p;
     int i = 0;
-    char file[512], patch[512], prev_file[512], version[5], prev_version[5];
+    char file[512], patch[512], version[5];
+    if(f -> arr[f -> head] == NULL) {
+        printf("Nothing to commit, empty working tree\n");
+        return;
+    }
     itoa(f -> arr[f -> head] -> version + 1, version);
-    itoa(f -> arr[f -> head] -> version, prev_version);
     while(filename[i] != '.') {
         file[i] = filename[i];
         patch[i] = filename[i];
-        prev_file[i] = filename[i];
         i += 1;
     }
     file[i] = '\0';
     patch[i] = '\0';
-    prev_file[i] = '\0';
     strcat(file, "_v");
     strcat(file, version);
     strcat(file, ".txt");
     strcat(patch, "_v");
     strcat(patch, version);
     strcat(patch, ".patch");
-    strcat(prev_file, "_v");
-    strcat(prev_file, prev_version);
-    strcat(prev_file, ".txt");
     newnode = (node *)malloc(sizeof(node));
     chdir(".stagingArea");
     if(!newnode)
@@ -155,12 +156,16 @@ void commit(fileStorage *f, char *filename) {
     q = f -> arr[f -> head];
     newnode -> next = q;
     f -> arr[f -> head] = newnode; 
-    diff(newnode -> filename, filename, 'c');   
+    diff(newnode -> filename, filename, 'c');  
     return;
 }
 
 void push(fileStorage *f, char *filename) {
     node *p;
+    if(f -> arr[f -> head] == NULL) {
+        printf("Nothing to push, empty working tree\n");
+        return;
+    }
     p = f -> arr[f -> head];
     char cwd[2048], nwd[2048];
     if(getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -173,13 +178,24 @@ void push(fileStorage *f, char *filename) {
         strcat(nwd, "/");
         strcat(nwd, filename);
     }
-    if(rename(cwd, nwd))
+    if(rename(cwd, nwd)) {
         printf("Could not push %s\n", filename);
+        return;
+    }
+    printf("%s pushed successfully\n", filename);
     return;
 }
 
 void revert(fileStorage *f, char *filename, int version) {
     node *p;
+    if(f -> arr[f -> head] == NULL) {
+        printf("Head not set correctly\n");
+        return;
+    }
+    if(version > f -> arr[f -> head] -> version || version < 1) {
+        printf("Invalid version number\n");
+        return;
+    }
     char cwd[2048], nwd[2048], dir[2048];
     if(getcwd(cwd, sizeof(cwd)) != NULL) {
         strcat(cwd, "/");
@@ -188,16 +204,64 @@ void revert(fileStorage *f, char *filename, int version) {
         strcat(nwd, filename);
         strcat(cwd, filename);
         if(rename(cwd, nwd)) {
-            printf("Addition to staging area failed\n");
+            printf("%s failed to move to staging area\n", filename);
             return;
         }
     }
-    changeRepository(".stagingArea");
+    chdir(".stagingArea");
     p = f -> arr[f -> head]; 
     while(p -> version != version)
         p = p -> next;
     patch(filename, p -> patchfile);
-    if(rename(nwd, cwd))
+    if(rename(nwd, cwd)) {
         printf("Could not revert %s\n", filename);
+        return;
+    }
+    printf("%s reverted to version %d\n", filename, version);
+    chdir("..");
     return;
+}
+
+void versionDiff(fileStorage *f, char *filename, int version1, int version2) {
+    char filename1[512], filename2[512], v1[5], v2[5];
+    int i = 0;
+    if(f -> arr[f -> head] == NULL) {
+        printf("Head not set correctly\n");
+        return;
+    }
+    if(version1 > f -> arr[f -> head] -> version || version1 < 1) {
+        printf("Invalid version number\n");
+        return;
+    }
+    if(version2 > f -> arr[f -> head] -> version || version2 < 1) {
+        printf("Invalid version number\n");
+        return;
+    }
+    itoa(version1, v1);
+    itoa(version2, v2);
+    while(filename[i] != '.') {
+        filename1[i] = filename[i];
+        filename2[i] = filename[i];
+        i += 1;
+    }
+    filename1[i] = '\0';
+    filename2[i] = '\0';
+    strcat(filename1, "_v");
+    strcat(filename1, v1);
+    strcat(filename1, ".txt");
+    strcat(filename2, "_v");
+    strcat(filename2, v2);
+    strcat(filename2, ".txt");
+    chdir(".stagingArea");
+    diff(filename1, filename2, 'p'); 
+    chdir("..");
+    return;
+}
+
+void printWarranty() {
+  printf("\n   vcs - Version Control System\n");
+  printf("   Copyright 2021 Shreya Vaidya, MIS - 111903156\n\n");
+  printf("   This program is free software; you can redistribute it and/or modify it\n   in line with any application you wish to build.\n\n");
+  printf("   This program is distributed in the hope that it will be useful,\n   but WITHOUT ANY WARRANTY; without even the implied warranty of\n   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n");
+  return;
 }

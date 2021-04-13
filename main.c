@@ -7,8 +7,10 @@ int main(int argc, char *argv[]) {
 	fileStorage f;
 	initFileStorage(&f);
 	char command[128], args[128];
-	int v;
+	int v1, v2;
+	printWarranty();
 	do {
+		printf("> ");
 		scanf("%s", command);
 		if(strcmp(command, "newrepo") == 0) {
 			scanf("%s", args);
@@ -17,9 +19,6 @@ int main(int argc, char *argv[]) {
 		else if(strcmp(command, "changerepo") == 0) {
 			scanf("%s", args);
 			changeRepository(args);
-		}
-		else if(strcmp(command, "init") == 0) {
-			initialize();
 		}
 		else if(strcmp(command, "add") == 0) {
 			scanf("%s", args);
@@ -35,8 +34,14 @@ int main(int argc, char *argv[]) {
 		}
 		else if(strcmp(command, "revert") == 0) {
 			scanf("%s", args);
-			scanf("%d", &v);
-			revert(&f, args, v);
+			scanf("%d", &v1);
+			revert(&f, args, v1);
+		}
+		else if(strcmp(command, "diff") == 0) {
+			scanf("%s", args);
+			scanf("%d", &v1);
+			scanf("%d", &v2);
+			versionDiff(&f, args, v1, v2);
 		}
 		else if(strcmp(command, "exit") == 0)
 			exit(1);

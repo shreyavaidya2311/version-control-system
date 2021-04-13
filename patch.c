@@ -33,14 +33,13 @@ void patch(char* filename, char* patchfile) {
 	f = fopen(filename, "w");
 	fpatch = fopen(patchfile, "r");
 	if(f == NULL) {
-		printf("here1\n");
+		printf("%s does not exist\n", filename);
 		exit(1);
 	}
 	if(fpatch == NULL) {
-		printf("here2\n");
+		printf("%s does not exist\n", patchfile);
 		exit(1);
 	}
-	printf("patching file %s\n", filename);
 	patchFile(f, fpatch);
 	fclose(f);
 	fclose(fpatch);
