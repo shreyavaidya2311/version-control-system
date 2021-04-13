@@ -27,23 +27,19 @@ void patchFile(FILE *f, FILE *fpatch) {
 	return;
 }
 
-void patch(char* patchfile) {
+void patch(char* filename, char* patchfile) {
 	FILE *f, *fpatch;
 	char **fMatrix;
-	char filename[128];
-	int i = 0;
-	while(patchfile[i] != '.') {
-		filename[i] = patchfile[i];
-		i += 1;
-	}
-	filename[i] = '\0';
-	strcat(filename, ".txt");
 	f = fopen(filename, "w");
 	fpatch = fopen(patchfile, "r");
-	if(f == NULL)
+	if(f == NULL) {
+		printf("here1\n");
 		exit(1);
-	if(fpatch == NULL)
+	}
+	if(fpatch == NULL) {
+		printf("here2\n");
 		exit(1);
+	}
 	printf("patching file %s\n", filename);
 	patchFile(f, fpatch);
 	fclose(f);

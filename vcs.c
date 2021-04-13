@@ -83,8 +83,8 @@ void add(fileStorage *f, char *filename) {
         newnode = (node *)malloc(sizeof(node));
         if(!newnode)
             return;
-        newnode -> patchfile = NULL;
-        newnode -> filename = filename;
+        strcpy(newnode -> patchfile, "");
+        strcpy(newnode -> filename, filename);
         newnode -> next = NULL;
         newnode -> version = 0;
         f -> arr[i] = newnode;
@@ -92,8 +92,8 @@ void add(fileStorage *f, char *filename) {
         f -> head = f -> numberOfFiles;
         f -> numberOfFiles += 1;
         printf("%s added to staging area\n", filename);
+        printf("%s\n", newnode -> filename);
     }
-    free(newnode);
     return;
 }
 
@@ -124,43 +124,50 @@ void itoa(int n, char s[]) {
 void commit(fileStorage *f, char *filename) {
     node *newnode, *q, *p;
     int i = 0;
-    char file[512], patch[512], version[5];
+    char file[512], patch[512], prev_file[512], version[5], prev_version[5];
     itoa(f -> arr[f -> head] -> version + 1, version);
+    itoa(f -> arr[f -> head] -> version, prev_version);
     while(filename[i] != '.') {
         file[i] = filename[i];
         patch[i] = filename[i];
+        prev_file[i] = filename[i];
         i += 1;
     }
     file[i] = '\0';
     patch[i] = '\0';
+    prev_file[i] = '\0';
     strcat(file, "_v");
     strcat(file, version);
     strcat(file, ".txt");
     strcat(patch, "_v");
     strcat(patch, version);
     strcat(patch, ".patch");
+    strcat(prev_file, "_v");
+    strcat(prev_file, prev_version);
+    strcat(prev_file, ".txt");
     newnode = (node *)malloc(sizeof(node));
     chdir(".stagingArea");
-    diff(file, filename, 'c');
     if(!newnode)
         return;
-    newnode -> patchfile = patch;
-    newnode -> filename = file;
+    strcpy(newnode -> patchfile, patch);
+    strcpy(newnode -> filename, file);
     newnode -> version = f -> arr[f -> head] -> version + 1;
     q = f -> arr[f -> head];
     newnode -> next = q;
-    f -> arr[f -> head] = newnode;    
+    f -> arr[f -> head] = newnode; 
+    diff(newnode -> filename, filename, 'c');   
     return;
 }
 
 void push(fileStorage *f, char *filename) {
+    node *p;
+    p = f -> arr[f -> head];
     char cwd[2048], nwd[2048];
     if(getcwd(cwd, sizeof(cwd)) != NULL) {
         strcat(cwd, "/");
         strcat(cwd, filename);
     }
-    printf("%s\n", f -> arr[f -> head] -> filename);
-    patch(f -> arr[f -> head] -> patchfile);
+    patch(p -> filename, p -> patchfile);
     chdir("..");
     if(getcwd(nwd, sizeof(nwd)) != NULL) {
         strcat(nwd, "/");
@@ -168,5 +175,29 @@ void push(fileStorage *f, char *filename) {
     }
     if(rename(cwd, nwd))
         printf("Could not push %s\n", filename);
+    return;
+}
+
+void revert(fileStorage *f, char *filename, int version) {
+    node *p;
+    char cwd[2048], nwd[2048], dir[2048];
+    if(getcwd(cwd, sizeof(cwd)) != NULL) {
+        strcat(cwd, "/");
+        strcpy(nwd, cwd);
+        strcat(nwd, ".stagingArea/");
+        strcat(nwd, filename);
+        strcat(cwd, filename);
+        if(rename(cwd, nwd)) {
+            printf("Addition to staging area failed\n");
+            return;
+        }
+    }
+    changeRepository(".stagingArea");
+    p = f -> arr[f -> head]; 
+    while(p -> version != version)
+        p = p -> next;
+    patch(filename, p -> patchfile);
+    if(rename(nwd, cwd))
+        printf("Could not revert %s\n", filename);
     return;
 }

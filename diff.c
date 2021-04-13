@@ -236,10 +236,8 @@ void makeDiffFile(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int
 			insertBegin(&diff, '+', f2Matrix[l2 - 1]);
 			l2 -= 1;
       	}
-    	else {
-      		insertBegin(&diff, '-', f1Matrix[l1 - 1]);
-			l1 -= 1;
-		}          
+    	else 
+    		continue;          
 	}
 	while(filename[i] != '.') {
 		patchfilename[i] = filename[i];
@@ -265,10 +263,10 @@ void diff(char *filename1, char *filename2, char o) {
     	f2Matrix[i] = (char *)malloc(SIZE * sizeof(char));
         LCSMatrix[i] = (int *)malloc(SIZE * sizeof(int));
     }
-    f1 = fopen(filename1, "w");
+    f1 = fopen(filename1, "r");
 	f2 = fopen(filename2, "r");
 	if(f1 == NULL)
-		exit(1);
+		f1 = fopen(filename1, "w");
 	if(f2 == NULL)
 		exit(1);
 	l1 = storeByLine(&f1Matrix, &f1) + 1; 
@@ -278,5 +276,7 @@ void diff(char *filename1, char *filename2, char o) {
 		computeDiff(LCSMatrix, f1Matrix, f2Matrix, l1, l2);
 	else
 		makeDiffFile(LCSMatrix, f1Matrix, f2Matrix, l1, l2, filename1);
+	fclose(f1);
+	fclose(f2);
 	return;
 }

@@ -7,6 +7,7 @@ int main(int argc, char *argv[]) {
 	fileStorage f;
 	initFileStorage(&f);
 	char command[128], args[128];
+	int v;
 	do {
 		scanf("%s", command);
 		if(strcmp(command, "newrepo") == 0) {
@@ -31,6 +32,11 @@ int main(int argc, char *argv[]) {
 		else if(strcmp(command, "push") == 0) {
 			scanf("%s", args);
 			push(&f, args);
+		}
+		else if(strcmp(command, "revert") == 0) {
+			scanf("%s", args);
+			scanf("%d", &v);
+			revert(&f, args, v);
 		}
 		else if(strcmp(command, "exit") == 0)
 			exit(1);
