@@ -4,6 +4,7 @@
 #include "diff.h"
 #include "patch.h"
 
+//patches given file line by line when patchfile line starts with '+' or ' '
 void printLine(FILE *f, char *line) {
 	char l[SIZE];
 	for(int i = 1; line[i] != '\0'; i++)
@@ -12,6 +13,7 @@ void printLine(FILE *f, char *line) {
 	return;
 }
 
+//stores the patchfile in a 2D matrix and calls printLine function to patch given file accordingly
 void patchFile(FILE *f, FILE *fpatch) {
 	char **fileMatrix;
 	int len;
@@ -27,6 +29,7 @@ void patchFile(FILE *f, FILE *fpatch) {
 	return;
 }
 
+//driver code for patch
 void patch(char* filename, char* patchfile) {
 	FILE *f, *fpatch;
 	char **fMatrix;

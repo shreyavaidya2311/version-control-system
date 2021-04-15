@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//initializes diffList
 void init(diffList *l) {
   *l = NULL;
   return;
 }
 
+//inserts node at the beginning of a diffList
 void insertBegin(diffList *l, char op, char* line) {
   node *newnode, *q;
   newnode = (node *)malloc(sizeof(node));
@@ -23,6 +25,7 @@ void insertBegin(diffList *l, char op, char* line) {
   return;
 }
 
+//functions to change colour of output on console
 void red () {
   printf("\033[1;31m");
   return;
@@ -38,6 +41,7 @@ void white () {
   return;
 }
 
+//prints diffList and shows color coded differences two files
 void printOutput(diffList l) {
   node *p = l;
   int additions = 0, deletions = 0;
@@ -58,6 +62,7 @@ void printOutput(diffList l) {
   return;
 }
 
+//creates patchfile using given diffList
 void createPatchFile(diffList l, char *filename) {
   FILE *f;
   f = fopen(filename, "w");

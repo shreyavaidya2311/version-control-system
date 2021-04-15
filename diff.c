@@ -5,6 +5,7 @@
 #include "diff.h"
 #include "diffoutput.h"
 
+// stores content of a given file line by line in a 2D Array
 int storeByLine(char ***fileMatrix, FILE **file) { 
 	char **matrix = *fileMatrix;
 	FILE *nfile = *file;
@@ -26,6 +27,7 @@ int max(int a, int b) {
   return b;
 }
 
+// forms an integer 2D Array storing the result of Longest Common Subsequent Algorithm
 int formLCSMatrix(int ***LCSMatrix, char ***f1Matrix, char ***f2Matrix, int l1, int l2) {
 	char **f1, **f2;
 	int i, j, x, y, **lcs = *LCSMatrix;
@@ -46,6 +48,7 @@ int formLCSMatrix(int ***LCSMatrix, char ***f1Matrix, char ***f2Matrix, int l1, 
 	return lcs[x - 1][y - 1];
 }
 
+// computes and stores diff output of two files in a diffList and prints it to the console
 void computeDiff(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int l2) {
 	diffList diff;
 	int iflag = 0, bflag = 0, wflag = 0;
@@ -77,6 +80,7 @@ void computeDiff(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int 
   return;
 }
 
+// computes and stores diff output of two files in a diffList and creates a patchfile accordingly
 void makeDiffFile(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int l2, char *filename) {
 	diffList diff;
 	char patchfilename[128];
@@ -116,6 +120,7 @@ void makeDiffFile(int **LCSMatrix, char **f1Matrix, char **f2Matrix, int l1, int
   return;
 }
 
+//driver code for diff
 void diff(char *filename1, char *filename2, char o) {
 	FILE *f1, *f2;
 	int l1, l2;

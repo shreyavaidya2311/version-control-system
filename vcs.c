@@ -8,6 +8,7 @@
 #include "patch.h"
 #include "vcs.h"
 
+//initializes the fileStorage struct
 void initFileStorage(fileStorage *f) {
     f -> arr = (node **)malloc(sizeof(node *) * 512);
     f -> head = 0;
@@ -17,6 +18,7 @@ void initFileStorage(fileStorage *f) {
     return;
 }
 
+//initializes the staging area inside a repository
 void initialize() {
     if(!mkdir(".stagingArea", 0755))
         printf("Repository initialized\n");
@@ -27,6 +29,7 @@ void initialize() {
     return;
 }
 
+//creates a new repository
 void newRepository(char *repository) {
     char* directory = repository;
     if(!mkdir(directory, 0777)) {
@@ -40,6 +43,7 @@ void newRepository(char *repository) {
     return;
 }
 
+//changes current directory to given repository
 void changeRepository(char *repository) {
 	if(!chdir(repository)) {
         printf("Changed repository to %s\n", repository);
@@ -51,6 +55,7 @@ void changeRepository(char *repository) {
     return;
 }
 
+//adds given file to staging area and sets the head of the fileStorage accordingly
 void add(fileStorage *f, char *filename) {
     node *newnode;
     char cwd[2048], nwd[2048], check[512]; 
@@ -100,30 +105,34 @@ void add(fileStorage *f, char *filename) {
     return;
 }
 
- void reverse(char s[]) {
+void reverse(char s[]) {
     int i, j;
     char c;
-    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+    for(i = 0, j = strlen(s) - 1; i < j; i++, j--) {
         c = s[i];
         s[i] = s[j];
         s[j] = c;
     }
+    return;
  }
 
+//function to convert integer to string
 void itoa(int n, char s[]) {
     int i, sign;
-    if ((sign = n) < 0)  
+    if((sign = n) < 0)  
         n = -n;         
     i = 0;
     do {       
         s[i++] = n % 10 + '0';   
-    } while ((n /= 10) > 0);   
-    if (sign < 0)
+    } while((n /= 10) > 0);   
+    if(sign < 0)
         s[i++] = '-';
     s[i] = '\0';
     reverse(s);
+    return;
 }
 
+//creates new node to store file (every version) and attaches it to the fileStorage
 void commit(fileStorage *f, char *filename) {
     node *newnode, *q, *p;
     int i = 0;
@@ -160,6 +169,7 @@ void commit(fileStorage *f, char *filename) {
     return;
 }
 
+//patches the file with its current version and moves it back to root of repository
 void push(fileStorage *f, char *filename) {
     node *p;
     if(f -> arr[f -> head] == NULL) {
@@ -186,6 +196,7 @@ void push(fileStorage *f, char *filename) {
     return;
 }
 
+//reverts current version of file to given version of file
 void revert(fileStorage *f, char *filename, int version) {
     node *p;
     if(f -> arr[f -> head] == NULL) {
@@ -222,6 +233,7 @@ void revert(fileStorage *f, char *filename, int version) {
     return;
 }
 
+//compares and generates the difference between two versions of a file
 void versionDiff(fileStorage *f, char *filename, int version1, int version2) {
     char filename1[512], filename2[512], v1[5], v2[5];
     int i = 0;
@@ -262,6 +274,19 @@ void printWarranty() {
   printf("\n   vcs - Version Control System\n");
   printf("   Copyright 2021 Shreya Vaidya, MIS - 111903156\n\n");
   printf("   This program is free software; you can redistribute it and/or modify it\n   in line with any application you wish to build.\n\n");
-  printf("   This program is distributed in the hope that it will be useful,\n   but WITHOUT ANY WARRANTY; without even the implied warranty of\n   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n");
+  printf("   This program is distributed in the hope that it will be useful,\n   but WITHOUT ANY WARRANTY; without even the implied warranty of\n   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
+  printf("   To find out more about the commands available, type `help`\n\n");
+  return;
+}
+
+void printHelp() {
+  printf("   Commands for Version Control System\n\n");
+  printf("   newrepo `repository_name`                            : creates new repository and initializes staging area\n");
+  printf("   changerepo `repository_name`                         : changes current directory to repository entered\n");
+  printf("   add `file_name`                                      : adds file to staging area and sets the head accordingly\n");
+  printf("   commit `file_name`                                   : creates node with filename and patchfile of the current version and attaches it to the file storage\n");
+  printf("   push `file_name`                                     : current version file in staging area is patched and original file is moved back to root of repository\n");
+  printf("   revert `file_name` `version_number`                  : file is reverted back to a previous version retaining all versions of the file\n");
+  printf("   diff `file_name` `version_number1` `version_number2` : shows difference between two versions of a file \n");
   return;
 }

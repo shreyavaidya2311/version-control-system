@@ -43,6 +43,8 @@ int main(int argc, char *argv[]) {
 			scanf("%d", &v2);
 			versionDiff(&f, args, v1, v2);
 		}
+		else if(strcmp(command, "help") == 0)
+			printHelp();
 		else if(strcmp(command, "exit") == 0)
 			exit(1);
 	} while(1);
